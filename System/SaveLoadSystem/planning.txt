@@ -1,10 +1,11 @@
 
 
 SaveSystem
+GlobalData
+SlotData
 
-IDataReadWrite
+ISavableItem > IDataConverter > IDataReadWrite
 IDataViewerEditor
-
 
 
 
