@@ -9,6 +9,8 @@ namespace AngusChanToolkit.MVC.Common
 
         public bool scrollScale;
         public bool dragMove;
+        public int dragMoveMouse;
+
         public bool keyboardMove;
         public float speed;
 
@@ -25,11 +27,11 @@ namespace AngusChanToolkit.MVC.Common
                 float scroll = -Input.mouseScrollDelta.y;
                 camera.orthographicSize += (camera.orthographicSize * scroll / 2) * 0.5f;
             }
-            if (dragMove && Input.GetMouseButtonDown(1))
+            if (dragMove && Input.GetMouseButtonDown(dragMoveMouse))
             {
                 mousePos = camera.ScreenToWorldPoint(Input.mousePosition);
             }
-            if (dragMove && Input.GetMouseButton(1))
+            if (dragMove && Input.GetMouseButton(dragMoveMouse))
             {
                 Vector2 current = camera.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 offset = mousePos - current;
