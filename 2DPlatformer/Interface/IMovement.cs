@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IMovementRequire
 {
-    void VelocityModifier(IDecisionInput input, ICollision collision, MovementStatus state);
+    void VelocityModifier(ImovementProperity properity, IDecisionInput input, ICollision collision, MovementStatus state);
 }

@@ -4,23 +4,16 @@ using UnityEngine;
 
 public class StandardMovement_Horizontal : MonoBehaviour, IMovementRequire
 {
-    [SerializeField] TarodevController.ScriptableStats _stats;
-
-    void IMovementRequire.VelocityModifier(IDecisionInput input, ICollision collision, MovementStatus state)
-    {
-        HandleDirection(input, collision, state);
-    }
-
-    void HandleDirection(IDecisionInput input, ICollision collision, MovementStatus state)
+    void IMovementRequire.VelocityModifier(ImovementProperity properity, IDecisionInput input, ICollision collision, MovementStatus state)
     {
         if (input.MoveDirection.x == 0)
         {
-            var deceleration = collision.grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
+            float deceleration = collision.grounded ? properity.groundDeceleration : properity.airDeceleration;
             state.currentVelocity.x = Mathf.MoveTowards(state.currentVelocity.x, 0, deceleration * Time.fixedDeltaTime);
         }
         else
         {
-            state.currentVelocity.x = Mathf.MoveTowards(state.currentVelocity.x, input.MoveDirection.x * _stats.MaxSpeed, _stats.Acceleration * Time.fixedDeltaTime);
+            state.currentVelocity.x = Mathf.MoveTowards(state.currentVelocity.x, input.MoveDirection.x * properity.maxSpeed, properity.acceleration * Time.fixedDeltaTime);
         }
     }
 }

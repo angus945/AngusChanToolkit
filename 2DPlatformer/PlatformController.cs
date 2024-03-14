@@ -5,8 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
 public class PlatformController : MonoBehaviour
 {
-    [SerializeField] ScriptableStats _stats;
-
+    ImovementProperity properity;
     IDecisionInput input;
     ICollision collision;
     IMovementRequire[] movements;
@@ -16,6 +15,7 @@ public class PlatformController : MonoBehaviour
 
     void Awake()
     {
+        properity = GetComponent<ImovementProperity>();
         input = GetComponent<IDecisionInput>();
         collision = GetComponent<ICollision>();
         movements = GetComponents<IMovementRequire>();
@@ -27,7 +27,7 @@ public class PlatformController : MonoBehaviour
 
         for (int i = 0; i < movements.Length; i++)
         {
-            movements[i].VelocityModifier(input, collision, state);
+            movements[i].VelocityModifier(properity, input, collision, state);
         }
 
         applier.ApplyMovement(state);
