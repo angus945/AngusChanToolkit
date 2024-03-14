@@ -2,30 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StandardMovement : MonoBehaviour, IMovement
+public class StandardMovement : MonoBehaviour, IMovementRequire
 {
     [SerializeField] TarodevController.ScriptableStats _stats;
 
-    Vector2 IMovement.frameVelocity { get => _frameVelocity; set => _frameVelocity = value; }
-
-    Vector2 _frameVelocity;
-
-    void FixedUpdate()
+    IDecisionInput input;
+    Vector3 IMovementRequire.VelocityModifier(IDecisionInput input, ICollision collision, MovementState state, Vector3 velocity)
     {
-        HandleJump();
-        HandleDirection();
-        HandleGravity();
+        this.input = input;
+
+        HandleJump(input, collision, state);
+        HandleDirection(input, collision, state);
+        HandleGravity(input, collision, state);
+
+        ClampJump(input, collision, state);
+
+        return _frameVelocity;
     }
 
-    //TODO Temp
-    bool _grounded;
+    Vector2 _frameVelocity;
     float _time;
-    float _frameLeftGrounded;
-    IDecisionInput _frameInput;
-    Rigidbody2D _rb;
-    //TODO
 
-    #region Jumping
+    void Update()
+    {
+        _time += Time.deltaTime;
+
+        if (input.Jump)
+        {
+            _jumpToConsume = true;
+            _timeJumpWasPressed = _time;
+        }
+    }
 
     bool _jumpToConsume;
     bool _bufferedJumpUsable;
@@ -34,52 +41,43 @@ public class StandardMovement : MonoBehaviour, IMovement
     float _timeJumpWasPressed;
 
     bool HasBufferedJump => _bufferedJumpUsable && _time < _timeJumpWasPressed + _stats.JumpBuffer;
-    bool CanUseCoyote => _coyoteUsable && !_grounded && _time < _frameLeftGrounded + _stats.CoyoteTime;
 
-    void HandleJump()
+    void HandleJump(IDecisionInput input, ICollision collision, MovementState state)
     {
-        if (!_endedJumpEarly && !_grounded && !_frameInput.JumpHeld && _rb.velocity.y > 0) _endedJumpEarly = true;
+        bool CanUseCoyote = _coyoteUsable && !collision.grounded && _time < collision.frameLeftGrounded + _stats.CoyoteTime;
+
+        if (!_endedJumpEarly && !collision.grounded && !input.JumpKeep && state.velocity.y > 0) _endedJumpEarly = true;
 
         if (!_jumpToConsume && !HasBufferedJump) return;
 
-        if (_grounded || CanUseCoyote) ExecuteJump();
+        if (collision.grounded || CanUseCoyote)
+        {
+            _endedJumpEarly = false;
+            _timeJumpWasPressed = 0;
+            _bufferedJumpUsable = false;
+            _coyoteUsable = false;
+            _frameVelocity.y = _stats.JumpPower;
+        }
 
         _jumpToConsume = false;
     }
 
-    void ExecuteJump()
+    void HandleDirection(IDecisionInput input, ICollision collision, MovementState state)
     {
-        _endedJumpEarly = false;
-        _timeJumpWasPressed = 0;
-        _bufferedJumpUsable = false;
-        _coyoteUsable = false;
-        _frameVelocity.y = _stats.JumpPower;
-    }
-
-    #endregion
-
-    #region Horizontal
-
-    void HandleDirection()
-    {
-        if (_frameInput.Move.x == 0)
+        if (input.MoveDirection.x == 0)
         {
-            var deceleration = _grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
+            var deceleration = collision.grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
             _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, 0, deceleration * Time.fixedDeltaTime);
         }
         else
         {
-            _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, _frameInput.Move.x * _stats.MaxSpeed, _stats.Acceleration * Time.fixedDeltaTime);
+            _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, input.MoveDirection.x * _stats.MaxSpeed, _stats.Acceleration * Time.fixedDeltaTime);
         }
     }
 
-    #endregion
-
-    #region Gravity
-
-    void HandleGravity()
+    void HandleGravity(IDecisionInput input, ICollision collision, MovementState state)
     {
-        if (_grounded && _frameVelocity.y <= 0f)
+        if (collision.grounded && _frameVelocity.y <= 0f)
         {
             _frameVelocity.y = _stats.GroundingForce;
         }
@@ -91,6 +89,21 @@ public class StandardMovement : MonoBehaviour, IMovement
         }
     }
 
-    #endregion
+    void ClampJump(IDecisionInput input, ICollision collision, MovementState state)
+    {
+        if (collision.ceilingHit)
+        {
+            Vector2 velocity = _frameVelocity;
+            velocity.y = Mathf.Min(0, velocity.y);
+            _frameVelocity = velocity;
+        }
 
+        // Landed on the Ground
+        if (collision.grounded && collision.groundHit)
+        {
+            _coyoteUsable = true;
+            _bufferedJumpUsable = true;
+            _endedJumpEarly = false;
+        }
+    }
 }

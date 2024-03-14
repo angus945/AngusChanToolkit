@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IDecisionInput
 {
-    bool JumpDown { get; }
-    bool JumpHeld { get; }
-    Vector2 Move { get; }
+    bool Jump { get; }
+    bool JumpKeep { get; }
+    Vector3 MoveDirection { get; }
 }

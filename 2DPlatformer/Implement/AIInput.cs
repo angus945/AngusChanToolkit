@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class AIInput : MonoBehaviour, IDecisionInput
 {
-    bool IDecisionInput.JumpDown { get => jumpDpwn; }
-    bool IDecisionInput.JumpHeld { get => jumpHeld; }
-    Vector2 IDecisionInput.Move { get => move; }
+    bool IDecisionInput.Jump { get => jumpDpwn; }
+    bool IDecisionInput.JumpKeep { get => jumpHeld; }
+    Vector3 IDecisionInput.MoveDirection { get => move; }
 
     bool jumpDpwn;
     bool jumpHeld;
