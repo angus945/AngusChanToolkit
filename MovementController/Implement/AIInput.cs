@@ -1,13 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Burst.Intrinsics;
+using AngusChanToolkit.Gameplay.Movement;
 using UnityEngine;
 
 public class AIInput : MonoBehaviour, IDecisionInput
 {
     bool IDecisionInput.Jump { get => jumpDpwn; }
     bool IDecisionInput.JumpKeep { get => jumpHeld; }
-    Vector3 IDecisionInput.MoveDirection { get => move; }
+    Vector IDecisionInput.MoveDirection { get => new Vector(move.x, move.y); }
 
     bool jumpDpwn;
     bool jumpHeld;

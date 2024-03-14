@@ -1,4 +1,5 @@
 using UnityEngine;
+using AngusChanToolkit.Gameplay.Movement;
 
 public class MovementProperity : MonoBehaviour, ImovementProperity
 {

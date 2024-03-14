@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using AngusChanToolkit.Gameplay.Movement;
 
 public class PlayerInput : MonoBehaviour, IDecisionInput
 {
     bool IDecisionInput.Jump { get => jumpDpwn; }
     bool IDecisionInput.JumpKeep { get => jumpHeld; }
-    Vector3 IDecisionInput.MoveDirection { get => move; }
+    Vector IDecisionInput.MoveDirection { get => new Vector(move.x, move.y); }
 
     bool jumpDpwn;
     bool jumpHeld;
