@@ -40,15 +40,7 @@ public class StandardCollision : MonoBehaviour, ICollision
         _groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, ~_stats.PlayerLayer);
         _ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, ~_stats.PlayerLayer);
 
-        // Hit a Ceiling
-        // if (ceilingHit)
-        // {
-        //     Vector2 velocity = _movement.frameVelocity;
-        //     velocity.y = Mathf.Min(0, velocity.y);
-        //     _movement.frameVelocity = velocity;
-        // }
 
-        // Landed on the Ground
         if (!_grounded && _groundHit)
         {
             _grounded = true;

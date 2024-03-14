@@ -12,6 +12,8 @@ public class PlatformController : MonoBehaviour
     IMovementRequire[] movements;
     IMovementApplyer applier;
 
+    MovementStatus state = new MovementStatus();
+
     void Awake()
     {
         input = GetComponent<IDecisionInput>();
@@ -19,29 +21,15 @@ public class PlatformController : MonoBehaviour
         movements = GetComponents<IMovementRequire>();
         applier = GetComponent<IMovementApplyer>();
     }
-
-    // void Update()
-    // {
-    //     _time += Time.deltaTime;
-    //     GatherInput();
-    // }
-
-
-    MovementState state = new MovementState();
-
     void FixedUpdate()
     {
-        Vector3 velocity = Vector3.zero;
-
         collision.UpdateCollision();
 
         for (int i = 0; i < movements.Length; i++)
         {
-            velocity = movements[i].VelocityModifier(input, collision, state, velocity);
+            movements[i].VelocityModifier(input, collision, state);
         }
 
-        applier.ApplyMovement(velocity);
-
-        state.velocity = velocity;
+        applier.ApplyMovement(state);
     }
 }

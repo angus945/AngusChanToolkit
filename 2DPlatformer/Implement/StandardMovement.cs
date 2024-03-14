@@ -7,20 +7,16 @@ public class StandardMovement : MonoBehaviour, IMovementRequire
     [SerializeField] TarodevController.ScriptableStats _stats;
 
     IDecisionInput input;
-    Vector3 IMovementRequire.VelocityModifier(IDecisionInput input, ICollision collision, MovementState state, Vector3 velocity)
+    void IMovementRequire.VelocityModifier(IDecisionInput input, ICollision collision, MovementStatus state)
     {
         this.input = input;
 
         HandleJump(input, collision, state);
-        HandleDirection(input, collision, state);
         HandleGravity(input, collision, state);
 
         ClampJump(input, collision, state);
-
-        return _frameVelocity;
     }
 
-    Vector2 _frameVelocity;
     float _time;
 
     void Update()
@@ -42,11 +38,11 @@ public class StandardMovement : MonoBehaviour, IMovementRequire
 
     bool HasBufferedJump => _bufferedJumpUsable && _time < _timeJumpWasPressed + _stats.JumpBuffer;
 
-    void HandleJump(IDecisionInput input, ICollision collision, MovementState state)
+    void HandleJump(IDecisionInput input, ICollision collision, MovementStatus state)
     {
         bool CanUseCoyote = _coyoteUsable && !collision.grounded && _time < collision.frameLeftGrounded + _stats.CoyoteTime;
 
-        if (!_endedJumpEarly && !collision.grounded && !input.JumpKeep && state.velocity.y > 0) _endedJumpEarly = true;
+        if (!_endedJumpEarly && !collision.grounded && !input.JumpKeep && state.lastVelocity.y > 0) _endedJumpEarly = true;
 
         if (!_jumpToConsume && !HasBufferedJump) return;
 
@@ -56,46 +52,34 @@ public class StandardMovement : MonoBehaviour, IMovementRequire
             _timeJumpWasPressed = 0;
             _bufferedJumpUsable = false;
             _coyoteUsable = false;
-            _frameVelocity.y = _stats.JumpPower;
+            state.currentVelocity.y = _stats.JumpPower;
         }
 
         _jumpToConsume = false;
     }
 
-    void HandleDirection(IDecisionInput input, ICollision collision, MovementState state)
+    void HandleGravity(IDecisionInput input, ICollision collision, MovementStatus state)
     {
-        if (input.MoveDirection.x == 0)
+        if (collision.grounded && state.currentVelocity.y <= 0f)
         {
-            var deceleration = collision.grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
-            _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, 0, deceleration * Time.fixedDeltaTime);
-        }
-        else
-        {
-            _frameVelocity.x = Mathf.MoveTowards(_frameVelocity.x, input.MoveDirection.x * _stats.MaxSpeed, _stats.Acceleration * Time.fixedDeltaTime);
-        }
-    }
-
-    void HandleGravity(IDecisionInput input, ICollision collision, MovementState state)
-    {
-        if (collision.grounded && _frameVelocity.y <= 0f)
-        {
-            _frameVelocity.y = _stats.GroundingForce;
+            state.currentVelocity.y = _stats.GroundingForce;
         }
         else
         {
             var inAirGravity = _stats.FallAcceleration;
-            if (_endedJumpEarly && _frameVelocity.y > 0) inAirGravity *= _stats.JumpEndEarlyGravityModifier;
-            _frameVelocity.y = Mathf.MoveTowards(_frameVelocity.y, -_stats.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime);
+            if (_endedJumpEarly && state.currentVelocity.y > 0)
+            {
+                inAirGravity *= _stats.JumpEndEarlyGravityModifier;
+            }
+            state.currentVelocity.y = Mathf.MoveTowards(state.currentVelocity.y, -_stats.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime);
         }
     }
 
-    void ClampJump(IDecisionInput input, ICollision collision, MovementState state)
+    void ClampJump(IDecisionInput input, ICollision collision, MovementStatus state)
     {
         if (collision.ceilingHit)
         {
-            Vector2 velocity = _frameVelocity;
-            velocity.y = Mathf.Min(0, velocity.y);
-            _frameVelocity = velocity;
+            state.currentVelocity.y = Mathf.Min(0, state.currentVelocity.y);
         }
 
         // Landed on the Ground

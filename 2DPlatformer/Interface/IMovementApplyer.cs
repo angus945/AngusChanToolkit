@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IMovementApplyer
 {
-    void ApplyMovement(Vector3 velocity);
+    void ApplyMovement(MovementStatus status);
 }

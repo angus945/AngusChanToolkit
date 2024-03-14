@@ -10,8 +10,9 @@ public class MovementApplyer : MonoBehaviour, IMovementApplyer
     {
         _rb = GetComponent<Rigidbody2D>();
     }
-    void IMovementApplyer.ApplyMovement(Vector3 velocity)
+    void IMovementApplyer.ApplyMovement(MovementStatus status)
     {
-        _rb.velocity = velocity;
+        status.lastVelocity = _rb.velocity;
+        _rb.velocity = status.currentVelocity;
     }
 }

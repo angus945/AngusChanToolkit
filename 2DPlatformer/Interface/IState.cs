@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 
-public class MovementState
+public class MovementStatus
 {
-    public Vector3 velocity { get; set; }
-    //TODO Protect
+    public Vector3 currentVelocity;
+    public Vector3 lastVelocity;
 }
