@@ -5,7 +5,7 @@ using AngusChanToolkit.Gameplay.Movement;
 
 public class StandardCollision : MonoBehaviour, ICollision
 {
-    [SerializeField] TarodevController.ScriptableStats _stats;
+    [SerializeField] LayerMask entityLayer;
 
     float ICollision.frameLeftGrounded { get => _frameLeftGrounded; }
     bool ICollision.grounded { get => _grounded; }
@@ -33,13 +33,13 @@ public class StandardCollision : MonoBehaviour, ICollision
         _time += Time.deltaTime;
     }
 
-    void ICollision.UpdateCollision()
+    void ICollision.UpdateCollision(ImovementProperity properity)
     {
         Physics2D.queriesStartInColliders = false;
 
         // Ground and Ceiling
-        _groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, ~_stats.PlayerLayer);
-        _ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, ~_stats.PlayerLayer);
+        _groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, properity.grounderDistance, ~entityLayer);
+        _ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, properity.grounderDistance, ~entityLayer);
 
 
         if (!_grounded && _groundHit)

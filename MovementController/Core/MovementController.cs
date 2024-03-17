@@ -21,7 +21,7 @@ namespace AngusChanToolkit.Gameplay.Movement
         }
         public void Update()
         {
-            collision.UpdateCollision();
+            collision.UpdateCollision(properity);
 
             for (int i = 0; i < movements.Length; i++)
             {

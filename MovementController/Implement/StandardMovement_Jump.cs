@@ -22,7 +22,7 @@ public class StandardMovement_Jump : MonoBehaviour, IMovementRequire
     {
         _time += Time.deltaTime;
 
-        if (input.Jump)
+        if (input != null && input.Jump)
         {
             _jumpToConsume = true;
             _timeJumpWasPressed = _time;

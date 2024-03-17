@@ -8,6 +8,6 @@ namespace AngusChanToolkit.Gameplay.Movement
         float frameLeftGrounded { get; }
         bool grounded { get; }
 
-        void UpdateCollision();
+        void UpdateCollision(ImovementProperity properity);
     }
 }
