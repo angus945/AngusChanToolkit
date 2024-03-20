@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IDataDownloader
+public interface ITableDownloader<T> where T : class
 {
-    void SyncDatas<T>(Action<T[]> onFinishedCallback);
+    void DownloadTalbeDatas(Action<T[]> onFinishedCallback);
 }

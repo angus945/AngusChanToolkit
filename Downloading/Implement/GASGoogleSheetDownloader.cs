@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class GASGoogleSheetDownloader : MonoBehaviour, IDataDownloader
+public class GASGoogleSheetDownloader<T> : ITableDownloader<T> where T : class
 {
     // // https://script.google.com/home/projects/1YkrYjL74-PsUwZrQqeC2MIW3s0WT3NiEgh1fNJqg2DRVpVN2q5b3iuer/edit?pli=1
     // https://script.google.com/u/0/home/projects/1Wfd2d_Z96N9niGa01_yEq5vth3kK1BXo46AhjCPzaA0bYH1W379cHjvA/edit
@@ -14,48 +14,48 @@ public class GASGoogleSheetDownloader : MonoBehaviour, IDataDownloader
     string excelID;
     string sheetName;
 
-    Coroutine syncRoutine;
-
-    public void SetSyncer(string GASPostURL, string excelID, string sheetName)
+    public GASGoogleSheetDownloader(string GASPostURL, string excelID, string sheetName)
     {
         this.GASPostURL = GASPostURL;
         this.excelID = excelID;
         this.sheetName = sheetName;
     }
-    void IDataDownloader.SyncDatas<T>(Action<T[]> onFinishedCallback)
-    {
-        if (syncRoutine != null) StopCoroutine(syncRoutine);
 
-        syncRoutine = StartCoroutine(SyncData((bool success, string json) =>
+    async void ITableDownloader<T>.DownloadTalbeDatas(Action<T[]> onFinishedCallback)
+    {
+        await AsyncGetRequest((bool success, string json) =>
         {
             if (!success)
             {
                 Debug.LogError("SyncData failed: " + json);
                 return;
             }
-
             JsonWrapper<T> wrapper = JsonUtility.FromJson<JsonWrapper<T>>("{\"items\":" + json + "}");
-            onFinishedCallback?.Invoke(wrapper.items);
-        }));
+            onFinishedCallback.Invoke(wrapper.items);
+        });
     }
-    IEnumerator SyncData(Action<bool, string> onFinishCallback)
+    async Task AsyncGetRequest(Action<bool, string> onFinishedCallback)
     {
         WWWForm form = new WWWForm();
         form.AddField("sheetID", excelID);
         form.AddField("sheetName", sheetName);
 
-        using (UnityWebRequest www = UnityWebRequest.Post(GASPostURL, form))
+        using (UnityWebRequest request = UnityWebRequest.Post(GASPostURL, form))
         {
-            yield return www.SendWebRequest();
+            request.SendWebRequest();
 
-            if (www.result != UnityWebRequest.Result.Success)
+            while (!request.isDone)
             {
-                onFinishCallback.Invoke(false, www.error);
+                await Task.Yield();
+            }
+
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                onFinishedCallback.Invoke(false, request.error);
             }
             else
             {
-                string json = www.downloadHandler.text;
-                onFinishCallback.Invoke(true, json);
+                onFinishedCallback.Invoke(true, request.downloadHandler.text);
             }
         }
     }
