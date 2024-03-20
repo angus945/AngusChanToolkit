@@ -9,6 +9,7 @@ namespace AngusChanToolkit.MVC
         Observer observer = new Observer();
         DataRequester requester = new DataRequester();
 
+        // Observer
         public void AddListener<T>(EventHandler listener) where T : EventArgs
         {
             observer.AddListener<T>(listener);
@@ -22,6 +23,7 @@ namespace AngusChanToolkit.MVC
             observer.TriggerEvent<T>(sender, args);
         }
 
+        // DataRequester
         public void RegestDataProvider<T>(RequestProvideHandler provider) where T : EventArgs
         {
             requester.RegestDataProvider<T>(provider);
@@ -30,9 +32,18 @@ namespace AngusChanToolkit.MVC
         {
             requester.RemoveDataProvider<T>(provider);
         }
+        public void RegestData<T>(T data) where T : EventArgs
+        {
+            requester.RegestData<T>(data);
+        }
+        public void RemoveData<T>() where T : EventArgs
+        {
+            requester.RemoveData<T>();
+        }
+
         public T RequestData<T>() where T : EventArgs
         {
-           return requester.RequestData<T>();
+            return requester.RequestData<T>();
         }
         public bool TryRequestData<T>(out T data) where T : EventArgs
         {
