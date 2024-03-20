@@ -13,7 +13,7 @@ public class CraftingSystem
     }
     public bool SearchByResult(ICraftingItem resultItem, out int recipeIndex)
     {
-        return craftingTable.SearchByResult(resultItem.CraftingKeys[0], out recipeIndex);
+        return craftingTable.SearchByResult(resultItem.Name, out recipeIndex);
     }
     public string[] GetRecipesKyes(ICraftingItem[] recipes)
     {
