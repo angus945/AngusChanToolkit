@@ -5,7 +5,7 @@ using AngusChanToolkit.Gameplay.Movement;
 
 public class StandardCollision : MonoBehaviour, ICollision
 {
-    [SerializeField] LayerMask entityLayer;
+    [SerializeField] LayerMask ignoreLayer;
 
     float ICollision.frameLeftGrounded { get => _frameLeftGrounded; }
     bool ICollision.grounded { get => _grounded; }
@@ -38,8 +38,8 @@ public class StandardCollision : MonoBehaviour, ICollision
         Physics2D.queriesStartInColliders = false;
 
         // Ground and Ceiling
-        _groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, properity.grounderDistance, ~entityLayer);
-        _ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, properity.grounderDistance, ~entityLayer);
+        _groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, properity.grounderDistance, ~ignoreLayer);
+        _ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, properity.grounderDistance, ~ignoreLayer);
 
 
         if (!_grounded && _groundHit)
