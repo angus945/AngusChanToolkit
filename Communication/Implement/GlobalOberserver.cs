@@ -4,9 +4,9 @@ using UnityEngine;
 namespace AngusChanToolkit.Unity
 {
     public class EventArgs_Global : EventArgs { }
-    public class GlobalOberserver : MonoBehaviour
+    public class GlobalObserver : MonoBehaviour
     {
-        static GlobalOberserver instance;
+        static GlobalObserver instance;
 
         Observer globalObserver = new Observer();
 
@@ -27,7 +27,7 @@ namespace AngusChanToolkit.Unity
             if (instance != null) return;
 
             GameObject instanceObject = new GameObject("GamePlay Events");
-            instance = instanceObject.AddComponent<GlobalOberserver>();
+            instance = instanceObject.AddComponent<GlobalObserver>();
         }
         public static void AddListener<T>(EventHandler listener) where T : EventArgs_Global
         {

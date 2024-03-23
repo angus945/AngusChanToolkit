@@ -174,13 +174,13 @@ namespace AngusChanToolkit.DataDriven
             return outputs.ToArray();
         }
 
-        public void StoreObject(string root, string directoryName, string fileName, object storeObj)
+        public void StoreObject(string identifierRoot, string directoryName, string fileName, object storeObj)
         {
-            if (!TryGetItem(root, out AssetsIdentifier identifier))
+            if (!TryGetItem(identifierRoot, out AssetsIdentifier identifier))
             {
-                string content = "{ \"itemName\": \"" + root + "\" }";
-                string folderPath = $"{registPath[0]}/{root}";
-                string identifierPath = $"{registPath[0]}/{root}/{AssetsIdentifier.FILE_NAME}.json";
+                string content = "{ \"itemName\": \"" + identifierRoot + "\" }";
+                string folderPath = $"{registPath[0]}/{identifierRoot}";
+                string identifierPath = $"{registPath[0]}/{identifierRoot}/{AssetsIdentifier.FILE_NAME}.json";
 
                 Directory.CreateDirectory(folderPath);
                 File.WriteAllText(identifierPath, content);
@@ -190,13 +190,13 @@ namespace AngusChanToolkit.DataDriven
 
             if (!identifier.TryGetDirectory(directoryName, out AssetsDirectory directory))
             {
-                string createDirectory = $"{registPath[0]}/{root}\\{directoryName}";
+                string createDirectory = $"{registPath[0]}/{identifierRoot}\\{directoryName}";
                 directory = identifier.CreateDirectory(createDirectory);
             }
 
             if (!directory.TryGetFileWithName(fileName, out AssetsPointer pointer))
             {
-                string saveFile = $"{registPath[0]}/{root}/{directoryName}\\{fileName}.json";
+                string saveFile = $"{registPath[0]}/{identifierRoot}/{directoryName}\\{fileName}.json";
 
                 pointer = directory.CreatePointer(saveFile);
             }

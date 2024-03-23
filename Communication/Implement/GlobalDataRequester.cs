@@ -33,13 +33,25 @@ namespace AngusChanToolkit.Unity
         {
             Initial();
 
-            instance.requester.RegestDataProvider<T>(provideHandler);
+            instance.requester.RegisterDataProvider<T>(provideHandler);
         }
         public static void RemoveDataProvider<T>(RequestProvideHandler provideHandler) where T : EventArgs_DataRequest
         {
             Initial();
 
             instance.requester.RemoveDataProvider<T>(provideHandler);
+        }
+        public static void RegestData<T>(T data) where T : EventArgs_DataRequest
+        {
+            Initial();
+
+            instance.requester.RegisterData<T>(data);
+        }
+        public static void RemoveData<T>(T data) where T : EventArgs_DataRequest
+        {
+            Initial();
+
+            instance.requester.RemoveData<T>(data);
         }
         public static T RequestData<T>() where T : EventArgs_DataRequest
         {

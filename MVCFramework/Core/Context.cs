@@ -24,12 +24,17 @@ namespace AngusChanToolkit.MVC
 
         public void RegistDataProvider<T>(RequestProvideHandler provider) where T : EventArgs
         {
-            requester.RegestDataProvider<T>(provider);
+            requester.RegisterDataProvider<T>(provider);
         }
         public void RemoveDataProvider<T>(RequestProvideHandler provider) where T : EventArgs
         {
             requester.RemoveDataProvider<T>(provider);
         }
+        public void RegisterData<T>(T data) where T : EventArgs
+        {
+            requester.RegisterData<T>(data);
+        }
+
         public T RequestData<T>() where T : EventArgs
         {
             return requester.RequestData<T>();

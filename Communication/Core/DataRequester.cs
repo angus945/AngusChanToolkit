@@ -5,9 +5,10 @@ using System.Collections.Generic;
 public delegate EventArgs RequestProvideHandler();
 public class DataRequester
 {
+    Dictionary<Type, EventArgs> dataTable = new Dictionary<Type, EventArgs>();
     Dictionary<Type, RequestProvideHandler> providerTable = new Dictionary<Type, RequestProvideHandler>();
 
-    public void RegestDataProvider<T>(RequestProvideHandler provider) where T : EventArgs
+    public void RegisterDataProvider<T>(RequestProvideHandler provider) where T : EventArgs
     {
         Type type = typeof(T);
 
@@ -28,6 +29,29 @@ public class DataRequester
             providerTable[type] -= provider;
         }
     }
+
+    public void RegisterData<T>(T data) where T : EventArgs
+    {
+        Type type = typeof(T);
+
+        if (dataTable.ContainsKey(type))
+        {
+            dataTable[type] = data;
+        }
+        else
+        {
+            dataTable.Add(type, data);
+        }
+    }
+    public void RemoveData<T>(T data) where T : EventArgs
+    {
+        Type type = typeof(T);
+        if (dataTable.ContainsKey(type))
+        {
+            dataTable.Remove(type);
+        }
+    }
+
     public T RequestData<T>() where T : EventArgs
     {
         Type type = typeof(T);
@@ -35,6 +59,10 @@ public class DataRequester
         if (providerTable.ContainsKey(type))
         {
             return providerTable[type].Invoke() as T;
+        }
+        else if (dataTable.ContainsKey(type))
+        {
+            return dataTable[type] as T;
         }
         else return null;
     }
@@ -45,6 +73,11 @@ public class DataRequester
         if (providerTable.ContainsKey(type))
         {
             data = providerTable[type].Invoke() as T;
+            return true;
+        }
+        else if (dataTable.ContainsKey(type))
+        {
+            data = dataTable[type] as T;
             return true;
         }
         else
