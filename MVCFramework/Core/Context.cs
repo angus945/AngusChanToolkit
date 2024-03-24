@@ -22,7 +22,7 @@ namespace AngusChanToolkit.MVC
             observer.TriggerEvent<T>(sender, args);
         }
 
-        public void RegistDataProvider<T>(RequestProvideHandler provider) where T : EventArgs
+        public void RegisterDataProvider<T>(RequestProvideHandler provider) where T : EventArgs
         {
             requester.RegisterDataProvider<T>(provider);
         }

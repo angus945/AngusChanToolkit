@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AngusChanToolkit.Unity
 {
-    public class EventArgs_DataRequest : EventArgs { }
+    public class EventArgs_DataRequester : EventArgs { }
     public class GlobalDataRequester : MonoBehaviour
     {
         static GlobalDataRequester instance;
@@ -29,37 +29,37 @@ namespace AngusChanToolkit.Unity
             GameObject instanceObject = new GameObject("DataRequest Events");
             instance = instanceObject.AddComponent<GlobalDataRequester>();
         }
-        public static void RegestProvider<T>(RequestProvideHandler provideHandler) where T : EventArgs_DataRequest
+        public static void RegisterProvider<T>(RequestProvideHandler provideHandler) where T : EventArgs_DataRequester
         {
             Initial();
 
             instance.requester.RegisterDataProvider<T>(provideHandler);
         }
-        public static void RemoveDataProvider<T>(RequestProvideHandler provideHandler) where T : EventArgs_DataRequest
+        public static void RemoveDataProvider<T>(RequestProvideHandler provideHandler) where T : EventArgs_DataRequester
         {
             Initial();
 
             instance.requester.RemoveDataProvider<T>(provideHandler);
         }
-        public static void RegestData<T>(T data) where T : EventArgs_DataRequest
+        public static void RegisterData<T>(T data) where T : EventArgs_DataRequester
         {
             Initial();
 
             instance.requester.RegisterData<T>(data);
         }
-        public static void RemoveData<T>(T data) where T : EventArgs_DataRequest
+        public static void RemoveData<T>(T data) where T : EventArgs_DataRequester
         {
             Initial();
 
             instance.requester.RemoveData<T>(data);
         }
-        public static T RequestData<T>() where T : EventArgs_DataRequest
+        public static T RequestData<T>() where T : EventArgs_DataRequester
         {
             Initial();
 
             return instance.requester.RequestData<T>();
         }
-        public static bool TryRequestData<T>(out T data) where T : EventArgs_DataRequest
+        public static bool TryRequestData<T>(out T data) where T : EventArgs_DataRequester
         {
             Initial();
 
