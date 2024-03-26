@@ -30,8 +30,20 @@ public class GASGoogleSheetDownloader<T> : ITableDownloader<T> where T : class
                 Debug.LogError("SyncData failed: " + json);
                 return;
             }
-            JsonWrapper<T> wrapper = JsonUtility.FromJson<JsonWrapper<T>>("{\"items\":" + json + "}");
-            onFinishedCallback.Invoke(wrapper.items);
+
+            try
+            {
+                JsonWrapper<T> wapper = JsonUtility.FromJson<JsonWrapper<T>>("{\"items\":" + json + "}");
+                onFinishedCallback.Invoke(wapper.items);
+
+                Debug.Log("SyncData success: " + json);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("SyncData failed: " + e.Message);
+                return;
+            }
+
         });
     }
     async Task AsyncGetRequest(Action<bool, string> onFinishedCallback)
@@ -46,7 +58,8 @@ public class GASGoogleSheetDownloader<T> : ITableDownloader<T> where T : class
 
             while (!request.isDone)
             {
-                await Task.Yield();
+                Debug.Log($"{sheetName} is downloading...,");
+                await Task.Delay(1000);
             }
 
             if (request.result != UnityWebRequest.Result.Success)
