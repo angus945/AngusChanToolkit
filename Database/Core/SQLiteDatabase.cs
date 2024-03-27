@@ -32,4 +32,8 @@ public class SQLiteDatabase<T> : IDatabaseReader<T> where T : new()
     {
         return connection.Get(predicate);
     }
+    T[] IDatabaseReader<T>.GetAll()
+    {
+        return connection.Table<T>().ToArray();
+    }
 }
