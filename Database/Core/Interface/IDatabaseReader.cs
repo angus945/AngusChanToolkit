@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-public interface IDatabaseReader<T>
+public interface IDatabaseReader<T> where T : new()
 {
-    public T GetByIndex(int index);
-    public IEnumerable<T> GetAll();
-    public IEnumerable<T> GetItems(Expression<Func<T, bool>> expression);
+    T Get(Expression<Func<T, bool>> predicate);
 }

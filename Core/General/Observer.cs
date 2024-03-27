@@ -2,37 +2,40 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Observer
+namespace AngusChanToolkit
 {
-    Dictionary<Type, EventHandler> gamePlayEvents = new Dictionary<Type, EventHandler>();
+    public class Observer
+    {
+        Dictionary<Type, EventHandler> gamePlayEvents = new Dictionary<Type, EventHandler>();
 
-    public void AddListener<T>(EventHandler listener) where T : EventArgs
-    {
-        Type type = typeof(T);
-        if (gamePlayEvents.ContainsKey(type))
+        public void AddListener<T>(EventHandler listener) where T : EventArgs
         {
-            gamePlayEvents[type] += listener;
+            Type type = typeof(T);
+            if (gamePlayEvents.ContainsKey(type))
+            {
+                gamePlayEvents[type] += listener;
+            }
+            else
+            {
+                gamePlayEvents.Add(type, listener);
+            }
         }
-        else
+        public void RemoveListener<T>(EventHandler listener) where T : EventArgs
         {
-            gamePlayEvents.Add(type, listener);
+            Type type = typeof(T);
+            if (gamePlayEvents.ContainsKey(type))
+            {
+                gamePlayEvents[type] -= listener;
+            }
         }
-    }
-    public void RemoveListener<T>(EventHandler listener) where T : EventArgs
-    {
-        Type type = typeof(T);
-        if (gamePlayEvents.ContainsKey(type))
+        public void TriggerEvent<T>(object sender, T args) where T : EventArgs
         {
-            gamePlayEvents[type] -= listener;
-        }
-    }
-    public void TriggerEvent<T>(object sender, T args) where T : EventArgs
-    {
-        Type type = typeof(T);
+            Type type = typeof(T);
 
-        if (gamePlayEvents.ContainsKey(type))
-        {
-            gamePlayEvents[type]?.Invoke(sender, args);
+            if (gamePlayEvents.ContainsKey(type))
+            {
+                gamePlayEvents[type]?.Invoke(sender, args);
+            }
         }
     }
 }
