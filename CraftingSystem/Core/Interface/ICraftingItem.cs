@@ -6,4 +6,5 @@ public interface ICraftingItem
 {
     string[] CraftingKeys { get; }
     string Name { get; }
+    void OnCrafted(ICraftingItem[] ingredients);
 }

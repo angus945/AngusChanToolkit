@@ -27,6 +27,7 @@ public class CraftingEncoder_MultipleInput : ICraftingEncoder
             return;
         }
 
+        //TODO Check Order of result keys 優先的要再前面才對
         ICraftingItem item = recipes[depth];
         for (int i = 0; i < item.CraftingKeys.Length; i++)
         {
