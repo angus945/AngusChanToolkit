@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using UnityEngine;
 
-public class Database<T> where T : new()
+public class Database<T> : IDatabaseReader<T> where T : new()
 {
     IPathLocator pathLocator;
     ISQLService database;
@@ -26,7 +27,13 @@ public class Database<T> where T : new()
     {
         database.InsertAll(objs);
     }
-    public IEnumerable<T> GetItem(Expression<Func<T, bool>> expression)
+
+    //Interface
+    public T GetByIndex(int index)
+    {
+        return database.GetItems<T>().ElementAt(index);
+    }
+    public IEnumerable<T> GetItems(Expression<Func<T, bool>> expression)
     {
         return database.GetItems<T>(expression);
     }
@@ -35,4 +42,5 @@ public class Database<T> where T : new()
     {
         return database.GetItems<T>();
     }
+
 }
